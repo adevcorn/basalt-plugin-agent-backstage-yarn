@@ -1,0 +1,19 @@
+[package]
+name = "plugin-agent-backstage-yarn"
+version = "0.1.0"
+edition = "2021"
+description = "Yarn / Backstage CLI agent launcher plugin for Basalt with build, test, lint, and backstage-cli support"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+basalt-plugin-sdk = { path = "../basalt-plugin-sdk", features = ["serde"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+[profile.release]
+opt-level = "s"
+lto = true
+strip = true
+codegen-units = 1
