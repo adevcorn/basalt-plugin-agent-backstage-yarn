@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Checkout SDK
+        uses: actions/checkout@v4
+        with:
+          repository: adevcorn/basalt-plugin-sdk
+          path: ../basalt-plugin-sdk
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      # NOTE: capability plugins build for wasm32-unknown-unknown (NOT wasip1).
+      - name: Build
+        run: cargo build --release --target wasm32-unknown-unknown
+
+      - name: Rename artifact
+        run: |
+          WASM=$(ls target/wasm32-unknown-unknown/release/*.wasm | head -1)
+          cp "$WASM" agent_backstage_yarn.wasm
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: agent_backstage_yarn.wasm
