@@ -13,13 +13,16 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout plugin
+        uses: actions/checkout@v4
+        with:
+          path: plugin
 
       - name: Checkout SDK
         uses: actions/checkout@v4
         with:
           repository: adevcorn/basalt-plugin-sdk
-          path: ../basalt-plugin-sdk
+          path: basalt-plugin-sdk
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -28,9 +31,11 @@ jobs:
 
       # NOTE: capability plugins build for wasm32-unknown-unknown (NOT wasip1).
       - name: Build
+        working-directory: plugin
         run: cargo build --release --target wasm32-unknown-unknown
 
       - name: Rename artifact
+        working-directory: plugin
         run: |
           WASM=$(ls target/wasm32-unknown-unknown/release/*.wasm | head -1)
           cp "$WASM" agent_backstage_yarn.wasm
@@ -38,4 +43,4 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: agent_backstage_yarn.wasm
+          files: plugin/agent_backstage_yarn.wasm
