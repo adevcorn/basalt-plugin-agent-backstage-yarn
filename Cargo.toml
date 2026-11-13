@@ -1,6 +1,6 @@
 [package]
 name = "plugin-agent-backstage-yarn"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "Yarn / Backstage CLI agent launcher plugin for Basalt with build, test, lint, and backstage-cli support"
 
